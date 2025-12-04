@@ -1230,7 +1230,7 @@ const Clients = () => {
     setPlanTypeFilter(planType);
   }, [location.search]);
   
-  const [selectedClient, setSelectedClient] = useState<Client | null>(CLIENTS.length > 0 ? CLIENTS[0] : null);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [clientViewTab, setClientViewTab] = useState<"details" | "reports" | "charts">("details");
   const [showAddClient, setShowAddClient] = useState(false);
   const [expandedPlans, setExpandedPlans] = useState<Set<string>>(new Set());
