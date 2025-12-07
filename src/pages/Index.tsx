@@ -333,7 +333,6 @@ const Index = () => {
   const statsCards = [
     { label: 'Assets Under Administration', value: '$1,055,611.55', icon: DollarSign, iconBg: 'bg-green-100', iconColor: 'text-green-600' },
     { label: 'Clients', value: '27', icon: Users, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },
-    { label: 'Trades Pending', value: '3', icon: Clock, iconBg: 'bg-orange-100', iconColor: 'text-orange-600' },
   ];
 
   // Plan types with counts, AUA, and hover colors
@@ -625,7 +624,7 @@ const Index = () => {
     <PageLayout title="">
       <div className="space-y-3">
         {/* Advisor Snapshot */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {statsCards.map((stat, index) => (
             <Card 
               key={index} 
@@ -649,55 +648,79 @@ const Index = () => {
 
         {/* Plans */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          <Card className="border border-gray-200 shadow-sm bg-white">
-            <CardHeader 
-              className="pb-2 pt-3 px-4 cursor-pointer hover:bg-gray-50 transition-colors rounded-t-lg"
-              onClick={() => setIsPlansExpanded(!isPlansExpanded)}
-            >
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold text-gray-900">
-                  Plans <span className="text-gray-500 font-normal">({totalPlans})</span>
-                </CardTitle>
-                <div className="transition-transform duration-300 ease-in-out">
-                  {isPlansExpanded ? (
-                    <ChevronUp className="h-4 w-4 text-gray-500" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-gray-500" />
-                  )}
+          <Card 
+            className="border border-gray-200 shadow-sm bg-white cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => setIsPlansExpanded(!isPlansExpanded)}
+          >
+            {!isPlansExpanded ? (
+              <CardContent className="flex items-center justify-between py-3">
+                <div className="space-y-0.5">
+                  <CardDescription className="text-gray-500 text-xs uppercase tracking-wide">
+                    Plans
+                  </CardDescription>
+                  <CardTitle className="text-lg font-semibold text-gray-900">{totalPlans}</CardTitle>
                 </div>
-              </div>
-            </CardHeader>
-            <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                isPlansExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
-              }`}
-            >
-              <CardContent className="space-y-1.5 pt-0 px-4 pb-3">
-                {planTypes.map((plan, index) => (
-                  <div
-                    key={index}
-                    onClick={() => navigate(`/clients?planType=${encodeURIComponent(plan.type)}`)}
-                    className={`flex items-center justify-between rounded-lg border border-gray-100 px-2.5 py-1.5 transition-colors cursor-pointer ${plan.hoverColor}`}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <p className="font-medium text-xs text-gray-900">{plan.type}</p>
-                      <span className="text-xs text-gray-500">•</span>
-                      <p className="text-xs text-gray-500">{formatCurrency(plan.aua)}</p>
-                    </div>
-                    <span className="font-semibold text-xs text-gray-900">{plan.count}</span>
-                  </div>
-                ))}
+                <div className="bg-purple-100 text-purple-600 p-2.5 rounded-lg">
+                  <Layers className="h-4 w-4" />
+                </div>
               </CardContent>
-            </div>
+            ) : (
+              <>
+                <CardHeader 
+                  className="pb-2 pt-3 px-4 cursor-pointer hover:bg-gray-50 transition-colors rounded-t-lg"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPlansExpanded(!isPlansExpanded);
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-semibold text-gray-900">
+                      Plans <span className="text-gray-500 font-normal">({totalPlans})</span>
+                    </CardTitle>
+                    <div className="transition-transform duration-300 ease-in-out">
+                      <ChevronUp className="h-4 w-4 text-gray-500" />
+                    </div>
+                  </div>
+                </CardHeader>
+                <div
+                  className="overflow-hidden transition-all duration-300 ease-in-out max-h-[1000px] opacity-100"
+                >
+                  <CardContent className="space-y-1.5 pt-0 px-4 pb-3">
+                    {planTypes.map((plan, index) => (
+                      <div
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/clients?planType=${encodeURIComponent(plan.type)}`);
+                        }}
+                        className={`flex items-center justify-between rounded-lg border border-gray-100 px-2.5 py-1.5 transition-colors cursor-pointer ${plan.hoverColor}`}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-medium text-xs text-gray-900">{plan.type}</p>
+                          <span className="text-xs text-gray-500">•</span>
+                          <p className="text-xs text-gray-500">{formatCurrency(plan.aua)}</p>
+                        </div>
+                        <span className="font-semibold text-xs text-gray-900">{plan.count}</span>
+                      </div>
+                    ))}
+                  </CardContent>
+                </div>
+              </>
+            )}
           </Card>
           
-          {/* Empty Tile */}
+          {/* Trades Pending */}
           <Card className="border border-gray-200 shadow-sm bg-white">
-            <CardHeader className="pb-2 pt-3 px-4">
-              <CardTitle className="text-sm font-semibold text-gray-900">
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="flex items-center justify-between py-3">
+              <div className="space-y-0.5">
+                <CardDescription className="text-gray-500 text-xs uppercase tracking-wide">
+                  Trades Pending
+                </CardDescription>
+                <CardTitle className="text-lg font-semibold text-gray-900">3</CardTitle>
+              </div>
+              <div className="bg-orange-100 text-orange-600 p-2.5 rounded-lg">
+                <Clock className="h-4 w-4" />
+              </div>
             </CardContent>
           </Card>
         </div>
