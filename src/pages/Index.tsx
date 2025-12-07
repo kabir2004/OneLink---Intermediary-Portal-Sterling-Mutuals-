@@ -36,6 +36,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  ChevronUp,
   CheckCircle2,
   Sparkles,
   Loader2,
@@ -92,6 +93,9 @@ const Index = () => {
 
   // Trades View Toggle
   const [tradesView, setTradesView] = useState<'progress' | 'rejected' | 'confirmed'>('progress');
+
+  // Plans Collapsible State
+  const [isPlansExpanded, setIsPlansExpanded] = useState(true);
 
   // New Client Dialog State
   const [showNewClient, setShowNewClient] = useState(false);
@@ -619,24 +623,24 @@ const Index = () => {
 
   return (
     <PageLayout title="">
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Advisor Snapshot */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {statsCards.map((stat, index) => (
             <Card 
               key={index} 
               className={`border border-gray-200 shadow-sm bg-white ${stat.label === 'Clients' ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
               onClick={stat.label === 'Clients' ? () => navigate('/clients') : undefined}
             >
-              <CardContent className="flex items-center justify-between py-4">
-                <div className="space-y-1">
+              <CardContent className="flex items-center justify-between py-3">
+                <div className="space-y-0.5">
                   <CardDescription className="text-gray-500 text-xs uppercase tracking-wide">
                     {stat.label}
                   </CardDescription>
-                  <CardTitle className="text-xl font-semibold text-gray-900">{stat.value}</CardTitle>
+                  <CardTitle className="text-lg font-semibold text-gray-900">{stat.value}</CardTitle>
                 </div>
-                <div className={`${stat.iconBg} ${stat.iconColor} p-3 rounded-lg`}>
-                  <stat.icon className="h-5 w-5" />
+                <div className={`${stat.iconBg} ${stat.iconColor} p-2.5 rounded-lg`}>
+                  <stat.icon className="h-4 w-4" />
                 </div>
               </CardContent>
             </Card>
@@ -644,35 +648,53 @@ const Index = () => {
         </div>
 
         {/* Plans */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           <Card className="border border-gray-200 shadow-sm bg-white">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold text-gray-900">
-                Plans <span className="text-gray-500 font-normal">({totalPlans})</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {planTypes.map((plan, index) => (
-                <div
-                  key={index}
-                  onClick={() => navigate(`/clients?planType=${encodeURIComponent(plan.type)}`)}
-                  className={`flex items-center justify-between rounded-lg border border-gray-100 px-3 py-2 transition-colors cursor-pointer ${plan.hoverColor}`}
-                >
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-sm text-gray-900">{plan.type}</p>
-                    <span className="text-xs text-gray-500">•</span>
-                    <p className="text-xs text-gray-500">{formatCurrency(plan.aua)}</p>
-                  </div>
-                  <span className="font-semibold text-sm text-gray-900">{plan.count}</span>
+            <CardHeader 
+              className="pb-2 pt-3 px-4 cursor-pointer hover:bg-gray-50 transition-colors rounded-t-lg"
+              onClick={() => setIsPlansExpanded(!isPlansExpanded)}
+            >
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-semibold text-gray-900">
+                  Plans <span className="text-gray-500 font-normal">({totalPlans})</span>
+                </CardTitle>
+                <div className="transition-transform duration-300 ease-in-out">
+                  {isPlansExpanded ? (
+                    <ChevronUp className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                  )}
                 </div>
-              ))}
-            </CardContent>
+              </div>
+            </CardHeader>
+            <div
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                isPlansExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+              }`}
+            >
+              <CardContent className="space-y-1.5 pt-0 px-4 pb-3">
+                {planTypes.map((plan, index) => (
+                  <div
+                    key={index}
+                    onClick={() => navigate(`/clients?planType=${encodeURIComponent(plan.type)}`)}
+                    className={`flex items-center justify-between rounded-lg border border-gray-100 px-2.5 py-1.5 transition-colors cursor-pointer ${plan.hoverColor}`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-medium text-xs text-gray-900">{plan.type}</p>
+                      <span className="text-xs text-gray-500">•</span>
+                      <p className="text-xs text-gray-500">{formatCurrency(plan.aua)}</p>
+                    </div>
+                    <span className="font-semibold text-xs text-gray-900">{plan.count}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </div>
           </Card>
           
           {/* Empty Tile */}
           <Card className="border border-gray-200 shadow-sm bg-white">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold text-gray-900">
+            <CardHeader className="pb-2 pt-3 px-4">
+              <CardTitle className="text-sm font-semibold text-gray-900">
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -681,18 +703,18 @@ const Index = () => {
         </div>
 
         {/* Activity & Compliance */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Card className="border border-gray-200 shadow-sm bg-white">
-            <CardHeader className="pb-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <Card className="border border-gray-200 shadow-sm bg-white flex flex-col h-[calc(100vh-360px)] max-h-[600px]">
+            <CardHeader className="pb-2 pt-3 px-4 flex-shrink-0">
               <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold text-gray-900">Recent Activity</CardTitle>
+              <CardTitle className="text-sm font-semibold text-gray-900">Recent Activity</CardTitle>
                 <Select
                   value={activityFilter.timePeriod}
                   onValueChange={(value: 'all' | 'today' | 'yesterday' | 'week' | 'month') =>
                     setActivityFilter({ ...activityFilter, timePeriod: value })
                   }
                 >
-                  <SelectTrigger className="h-8 w-[120px] text-xs">
+                  <SelectTrigger className="h-7 w-[110px] text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -705,48 +727,48 @@ const Index = () => {
                 </Select>
               </div>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
+            <CardContent className="space-y-2 px-4 pb-3 flex flex-col flex-1 min-h-0">
+              <div className="space-y-1.5 flex-1 overflow-y-auto pr-2">
               {filteredTransactions.map((transaction, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between rounded-lg border border-gray-100 px-3 py-2 hover:border-gray-200 transition-colors"
+                  className="flex items-center justify-between rounded-lg border border-gray-100 px-2.5 py-1.5 hover:border-gray-200 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="bg-gray-100 p-2 rounded-lg">
-                      <transaction.icon className="h-4 w-4 text-gray-600" />
+                  <div className="flex items-center gap-2">
+                    <div className="bg-gray-100 p-1.5 rounded-lg">
+                      <transaction.icon className="h-3.5 w-3.5 text-gray-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm text-gray-900">{transaction.name}</p>
+                      <p className="font-medium text-xs text-gray-900">{transaction.name}</p>
                       <p className="text-xs text-gray-500">{transaction.time}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <p className={`font-semibold text-sm ${transaction.isNegative ? 'text-red-600' : 'text-green-600'}`}>
+                  <div className="flex items-center gap-1.5">
+                    <p className={`font-semibold text-xs ${transaction.isNegative ? 'text-red-600' : 'text-green-600'}`}>
                       {transaction.amount}
                     </p>
                     {transaction.isNegative ? (
-                      <ArrowUpRight className="h-4 w-4 text-red-600" />
+                      <ArrowUpRight className="h-3.5 w-3.5 text-red-600" />
                     ) : (
-                      <ArrowDownRight className="h-4 w-4 text-green-600" />
+                      <ArrowDownRight className="h-3.5 w-3.5 text-green-600" />
                     )}
                   </div>
                 </div>
               ))}
               </div>
-              <Button variant="outline" className="w-full border-gray-300 text-xs py-2 mt-2">
+              <Button variant="outline" className="w-full border-gray-300 text-xs py-1.5 mt-2 flex-shrink-0">
                 View all transactions
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 shadow-sm bg-white flex flex-col">
-              <CardContent className="space-y-4 pt-6 flex flex-col flex-1">
+          <Card className="border border-gray-200 shadow-sm bg-white flex flex-col h-[calc(100vh-360px)] max-h-[600px]">
+              <CardContent className="space-y-3 pt-4 px-4 pb-3 flex flex-col flex-1 min-h-0">
                 {/* Toggle Buttons */}
-                <div className="flex gap-2 mb-4">
+                <div className="flex gap-1.5 mb-2">
                   <Button
                     variant={tradesView === 'progress' ? 'default' : 'outline'}
-                    className={`flex-1 text-xs ${
+                    className={`flex-1 text-xs h-7 ${
                       tradesView === 'progress' 
                         ? 'bg-gray-900 hover:bg-gray-800 text-white' 
                         : 'border-gray-300 text-gray-700'
@@ -757,7 +779,7 @@ const Index = () => {
                   </Button>
                   <Button
                     variant={tradesView === 'rejected' ? 'default' : 'outline'}
-                    className={`flex-1 text-xs ${
+                    className={`flex-1 text-xs h-7 ${
                       tradesView === 'rejected' 
                         ? 'bg-gray-900 hover:bg-gray-800 text-white' 
                         : 'border-gray-300 text-gray-700'
@@ -768,7 +790,7 @@ const Index = () => {
                   </Button>
                   <Button
                     variant={tradesView === 'confirmed' ? 'default' : 'outline'}
-                    className={`flex-1 text-xs ${
+                    className={`flex-1 text-xs h-7 ${
                       tradesView === 'confirmed' 
                         ? 'bg-gray-900 hover:bg-gray-800 text-white' 
                         : 'border-gray-300 text-gray-700'
@@ -782,26 +804,26 @@ const Index = () => {
                 {/* Trades in Progress View */}
                 {tradesView === 'progress' && (
                   <div className="flex flex-col flex-1 min-h-0">
-                    <div className="space-y-2 max-h-[420px] overflow-y-auto pr-2 flex-1">
+                    <div className="space-y-1.5 flex-1 overflow-y-auto pr-2">
                       {tradesInProgress.map((trade, index) => (
-                        <div key={index} className="rounded-lg border border-gray-100 px-3 py-2.5">
-                          <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2 text-gray-900">
-                              <Clock className="h-4 w-4 text-orange-500" />
+                        <div key={index} className="rounded-lg border border-gray-100 px-2.5 py-2">
+                          <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-1.5 text-gray-900">
+                              <Clock className="h-3.5 w-3.5 text-orange-500" />
                               <div>
-                                <span className="text-sm font-medium">{trade.symbol}</span>
+                                <span className="text-xs font-medium">{trade.symbol}</span>
                                 <p className="text-xs text-gray-500">{trade.company}</p>
                       </div>
                             </div>
-                            <Badge className={
+                            <Badge className={`text-xs ${
                               trade.status === 'Pending' 
                                 ? 'bg-orange-100 text-orange-700 hover:bg-orange-100' 
                                 : 'bg-blue-100 text-blue-700 hover:bg-blue-100'
-                            }>
+                            }`}>
                               {trade.status}
                             </Badge>
                           </div>
-                          <div className="space-y-1 mb-2">
+                          <div className="space-y-0.5 mb-1.5">
                             <div className="flex items-center justify-between text-xs">
                               <span className="text-gray-500">Client:</span>
                               <span className="text-gray-700 font-medium">{trade.client}</span>
@@ -815,14 +837,14 @@ const Index = () => {
                             <span>{trade.type}</span>
                             <span className="font-semibold text-gray-900">{trade.amount}</span>
                           </div>
-                          <div className="text-xs text-gray-400 mt-1">
+                          <div className="text-xs text-gray-400 mt-0.5">
                             {trade.time}
                       </div>
                     </div>
                   ))}
                     </div>
-                    <div className="mt-auto pt-4">
-                  <Button variant="outline" className="w-full border-gray-300 text-xs py-2">
+                    <div className="mt-auto pt-2 flex-shrink-0">
+                  <Button variant="outline" className="w-full border-gray-300 text-xs py-1.5">
                         View all trades
                   </Button>
                 </div>
@@ -832,22 +854,22 @@ const Index = () => {
                 {/* Rejected Trades View */}
                 {tradesView === 'rejected' && (
                   <div className="flex flex-col flex-1 min-h-0">
-                    <div className="space-y-2 max-h-[420px] overflow-y-auto pr-2 flex-1">
+                    <div className="space-y-1.5 flex-1 overflow-y-auto pr-2">
                       {rejectedTrades.map((trade, index) => (
-                        <div key={index} className="rounded-lg border border-red-100 bg-red-50/30 px-3 py-2.5">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2 text-gray-900">
-                              <XCircle className="h-4 w-4 text-red-600" />
+                        <div key={index} className="rounded-lg border border-red-100 bg-red-50/30 px-2.5 py-2">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="flex items-center gap-1.5 text-gray-900">
+                              <XCircle className="h-3.5 w-3.5 text-red-600" />
                 <div>
-                                <span className="text-sm font-medium">{trade.symbol}</span>
+                                <span className="text-xs font-medium">{trade.symbol}</span>
                                 <p className="text-xs text-gray-500">{trade.company}</p>
                       </div>
                       </div>
-                            <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                            <Badge className="text-xs bg-red-100 text-red-700 hover:bg-red-100">
                               Rejected
                             </Badge>
                     </div>
-                          <div className="space-y-1 mb-2">
+                          <div className="space-y-0.5 mb-1.5">
                             <div className="flex items-center justify-between text-xs">
                               <span className="text-gray-500">Client:</span>
                               <span className="text-gray-700 font-medium">{trade.client}</span>
@@ -857,22 +879,22 @@ const Index = () => {
                               <span className="text-gray-700 font-medium">{trade.plan}</span>
                       </div>
                     </div>
-                          <div className="bg-red-50 border border-red-200 rounded-md p-2 mb-2">
-                            <p className="text-xs font-medium text-red-800 mb-1">Rejection Reason:</p>
+                          <div className="bg-red-50 border border-red-200 rounded-md p-1.5 mb-1.5">
+                            <p className="text-xs font-medium text-red-800 mb-0.5">Rejection Reason:</p>
                             <p className="text-xs text-red-700">{trade.rejectionMessage}</p>
                       </div>
                           <div className="flex items-center justify-between text-xs text-gray-600 pt-1 border-t border-red-100">
                             <span>{trade.type}</span>
                             <span className="font-semibold text-gray-900">{trade.amount}</span>
                       </div>
-                          <div className="text-xs text-gray-400 mt-1">
+                          <div className="text-xs text-gray-400 mt-0.5">
                             {trade.time}
                     </div>
                       </div>
                       ))}
                       </div>
-                    <div className="mt-auto pt-4">
-                      <Button variant="outline" className="w-full border-gray-300 text-xs py-2">
+                    <div className="mt-auto pt-2 flex-shrink-0">
+                      <Button variant="outline" className="w-full border-gray-300 text-xs py-1.5">
                         View all rejected trades
                       </Button>
                     </div>
@@ -882,22 +904,22 @@ const Index = () => {
                 {/* Confirmed Trades View */}
                 {tradesView === 'confirmed' && (
                   <div className="flex flex-col flex-1 min-h-0">
-                    <div className="space-y-2 max-h-[420px] overflow-y-auto pr-2 flex-1">
+                    <div className="space-y-1.5 flex-1 overflow-y-auto pr-2">
                       {confirmedTrades.map((trade, index) => (
-                        <div key={index} className="rounded-lg border border-green-100 bg-green-50/30 px-3 py-2.5">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2 text-gray-900">
-                              <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <div key={index} className="rounded-lg border border-green-100 bg-green-50/30 px-2.5 py-2">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="flex items-center gap-1.5 text-gray-900">
+                              <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
                               <div>
-                                <span className="text-sm font-medium">{trade.symbol}</span>
+                                <span className="text-xs font-medium">{trade.symbol}</span>
                                 <p className="text-xs text-gray-500">{trade.company}</p>
                 </div>
                             </div>
-                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                            <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100">
                               Confirmed
                             </Badge>
                           </div>
-                          <div className="space-y-1 mb-2">
+                          <div className="space-y-0.5 mb-1.5">
                             <div className="flex items-center justify-between text-xs">
                               <span className="text-gray-500">Client:</span>
                               <span className="text-gray-700 font-medium">{trade.client}</span>
@@ -915,14 +937,14 @@ const Index = () => {
                             <span>{trade.type}</span>
                             <span className="font-semibold text-gray-900">{trade.amount}</span>
                           </div>
-                          <div className="text-xs text-gray-400 mt-1">
+                          <div className="text-xs text-gray-400 mt-0.5">
                             {trade.time}
                           </div>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-auto pt-4">
-                      <Button variant="outline" className="w-full border-gray-300 text-xs py-2">
+                    <div className="mt-auto pt-2 flex-shrink-0">
+                      <Button variant="outline" className="w-full border-gray-300 text-xs py-1.5">
                         View all confirmed trades
                       </Button>
                     </div>

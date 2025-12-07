@@ -2000,20 +2000,20 @@ const Clients = () => {
                                       return (
                                         <div key={plan.id} className="border border-gray-200 rounded-lg overflow-hidden">
                                           <div className="flex items-center p-3 hover:bg-gray-50 transition-colors">
-                                            <button
-                                              onClick={() => togglePlanExpansion(plan.id)}
+                                          <button
+                                            onClick={() => togglePlanExpansion(plan.id)}
                                               className="flex-1 text-left"
-                                            >
-                                              <div className="flex items-center justify-between">
-                                                <div className="flex-1">
-                                                  <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-sm font-medium text-gray-900">{plan.type}</span>
-                                            <span className="text-sm text-gray-600">{plan.accountNumber}</span>
-                                          </div>
-                                                  <div className="text-xs text-gray-500">
-                                                    Market Value: {formatCurrency(plan.marketValue)}
+                                          >
+                                            <div className="flex items-center justify-between">
+                                              <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                          <span className="text-sm font-medium text-gray-900">{plan.type}</span>
+                                          <span className="text-sm text-gray-600">{plan.accountNumber}</span>
                                         </div>
-                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                  Market Value: {formatCurrency(plan.marketValue)}
+                                      </div>
+                                              </div>
                                               </div>
                                             </button>
                                             <div className="flex items-center gap-2">
@@ -2037,12 +2037,12 @@ const Clients = () => {
                                                 onClick={() => togglePlanExpansion(plan.id)}
                                                 className="p-1 hover:bg-gray-200 rounded transition-colors"
                                               >
-                                                {isExpanded ? (
+                                              {isExpanded ? (
                                                   <ChevronUp className="h-4 w-4 text-gray-400" />
-                                                ) : (
+                                              ) : (
                                                   <ChevronDown className="h-4 w-4 text-gray-400" />
-                                                )}
-                                              </button>
+                                              )}
+                                          </button>
                                             </div>
                                           </div>
                                           {isExpanded && (
